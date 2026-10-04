@@ -9,38 +9,28 @@ import {
   playerDieHelp,
   youAreFirst,
 } from "@/lib/game/engine.ts";
-import type { DraftPick, GameState } from "@/lib/game/types.ts";
+import type { Die, DraftPick, GameState } from "@/lib/game/types.ts";
 
 export function ActionPanel({
   state,
+  previewDie,
+  onConfirmPick,
   onContinue,
   onFinishEvent,
 }: {
   state: GameState;
+  previewDie: Die | null;
+  onConfirmPick: () => void;
   onContinue: () => void;
   onFinishEvent: () => void;
 }) {
-  if (state.phase === "yourPick") {
+  if (state.phase === "yourPick" || state.phase === "forcedPick") {
     return (
-      <PromptCard eyebrow="Your pick" title="Choose any remaining die">
-        <p>
-          You go first this round. Each die gardens in its zone and takes the action of
-          the note it sits on.
-        </p>
-      </PromptCard>
-    );
-  }
-  if (state.phase === "forcedPick") {
-    const live = state.dice.filter((d) => state.remainingIds.includes(d.id));
-    const min = live.length ? Math.min(...live.map((x) => x.value)) : 0;
-    const die = live.find((d) => d.value === min);
-    return (
-      <PromptCard eyebrow="Forced pick" title="Take the lowest remaining die">
-        <p>
-          As first player, your second die must be the lowest still on the board
-          {die ? ` — a ${die.value} on ${RONDEL[die.spaceIndex].short}.` : "."}
-        </p>
-      </PromptCard>
+      <PickPreview
+        die={previewDie}
+        forced={state.phase === "forcedPick"}
+        onConfirm={onConfirmPick}
+      />
     );
   }
   if (state.phase === "yourReveal" && state.currentPick) {
@@ -101,6 +91,78 @@ function PromptCard({
   );
 }
 
+function PickPreview({
+  die,
+  forced,
+  onConfirm,
+}: {
+  die: Die | null;
+  forced: boolean;
+  onConfirm: () => void;
+}) {
+  if (!die) {
+    return (
+      <PromptCard eyebrow="Your pick" title="Tap a die to preview it">
+        <p>
+          Nothing is taken yet. Tap another die to change the actions shown here, then
+          confirm when you are ready.
+        </p>
+      </PromptCard>
+    );
+  }
+  const help = playerDieHelp(asPick(die));
+  return (
+    <section className="rounded-[var(--radius-lg)] border border-border bg-card p-4 sm:p-5">
+      <div className="flex items-start gap-3">
+        <DieFace value={die.value} selected />
+        <div>
+          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-primary">
+            {forced ? "Forced pick" : "Preview"}
+          </p>
+          <h2 className="font-display text-xl text-ink">
+            {die.value} on {RONDEL[die.spaceIndex].title}
+          </h2>
+          <p className="text-sm text-muted">
+            {forced
+              ? "As first player, your second die is the lowest still on the board."
+              : "Tap a different die to change this. Confirm when it looks right."}
+          </p>
+        </div>
+      </div>
+      <ol className="mt-4 space-y-3 text-sm leading-relaxed">
+        <li>
+          <span className="font-semibold text-ink">Garden.</span> {help.garden}
+        </li>
+        <li>
+          <span className="font-semibold text-ink">Rondel.</span> {help.rondel}
+        </li>
+      </ol>
+      <Button className="mt-4 w-full" size="lg" onClick={onConfirm}>
+        Take this die
+      </Button>
+    </section>
+  );
+}
+
+function asPick(die: Die): DraftPick {
+  return {
+    dieId: die.id,
+    actor: "you",
+    spaceIndex: die.spaceIndex,
+    value: die.value,
+    action: RONDEL[die.spaceIndex].id,
+  };
+}
+
+function EdithPortrait({ className }: { className?: string }) {
+  return (
+    <img
+      src="/edith.jpg"
+      alt="Farmer Edith"
+      className={`shrink-0 rounded-full object-cover object-[center_18%] ring-2 ring-danger/35 ${className ?? ""}`}
+    />
+  );
+}
 function YourReveal({
   pick,
   onContinue,
@@ -152,21 +214,25 @@ function EdithReveal({
   return (
     <section className="rounded-[var(--radius-lg)] border border-danger/30 bg-card p-4 sm:p-5">
       <div className="flex items-start gap-3">
-        <DieFace value={pick.value} />
-        <div>
+        <EdithPortrait className="size-16 sm:size-20" />
+        <div className="min-w-0">
           <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-danger">Edith</p>
           <h2 className="font-display text-xl text-ink">
             Takes {pick.value} · {RONDEL[pick.spaceIndex].short}
           </h2>
           <p className="text-sm text-muted">Garden first, then the rondel. Cross these off your sheet.</p>
         </div>
+        <DieFace value={pick.value} />
       </div>
       <ol className="mt-4 space-y-3">
         {actions.map((action) => (
-          <li key={action.title} className="rounded-[var(--radius-md)] bg-well px-3 py-3">
-            <p className="font-display text-base text-ink">{action.title}</p>
-            <p className="mt-1 text-sm leading-relaxed text-foreground">{action.detail}</p>
-            <p className="mt-1 text-xs text-muted">{action.passHint}</p>
+          <li key={action.title} className="flex gap-3 rounded-[var(--radius-md)] bg-well px-3 py-3">
+            <EdithPortrait className="mt-0.5 size-10" />
+            <div className="min-w-0">
+              <p className="font-display text-base text-ink">{action.title}</p>
+              <p className="mt-1 text-sm leading-relaxed text-foreground">{action.detail}</p>
+              <p className="mt-1 text-xs text-muted">{action.passHint}</p>
+            </div>
           </li>
         ))}
       </ol>

@@ -1,5 +1,5 @@
 import { BookOpen, RotateCcw, Undo2 } from "lucide-react";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ActionPanel } from "@/components/action-panel.tsx";
 import { ReferenceSheet } from "@/components/reference-sheet.tsx";
 import { RondelBoard } from "@/components/rondel-board.tsx";
@@ -12,9 +12,22 @@ import { useGameStore } from "@/store/game-store.ts";
 
 export function GameApp() {
   const [hydrated, setHydrated] = useState(false);
+  const pendingStart = useRef(false);
   useEffect(() => {
-    void useGameStore.persist.rehydrate();
-    setHydrated(true);
+    let cancel = false;
+    void (async () => {
+      try {
+        await useGameStore.persist.rehydrate();
+      } catch {
+        // A bad saved game should not trap the title button.
+      }
+      if (cancel) return;
+      if (pendingStart.current) useGameStore.getState().start();
+      setHydrated(true);
+    })();
+    return () => {
+      cancel = true;
+    };
   }, []);
   const state = useGameStore((s) => s.state);
   const rolling = useGameStore((s) => s.rolling);
@@ -28,6 +41,17 @@ export function GameApp() {
   const finishEvent = useGameStore((s) => s.finishEvent);
   const reset = useGameStore((s) => s.reset);
   const toggleReference = useGameStore((s) => s.toggleReference);
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const selectable = selectableDieIds(state);
+  const forcedDieId = state.phase === "forcedPick" ? (selectable[0] ?? null) : null;
+
+  useEffect(() => {
+    if (state.phase === "forcedPick") {
+      setPreviewId(forcedDieId);
+      return;
+    }
+    setPreviewId(null);
+  }, [state.phase, state.picks.length, forcedDieId]);
 
   const takenBy = useMemo(() => {
     const map: Record<string, "you" | "edith"> = {};
@@ -35,19 +59,17 @@ export function GameApp() {
     return map;
   }, [state.picks]);
 
-  if (!hydrated) {
+  if (!hydrated || state.phase === "title") {
     return (
-      <Shell>
-        <TitleScreen onStart={() => {}} />
-      </Shell>
-    );
-  }
-
-  if (state.phase === "title") {
-    return (
-      <Shell onReference={toggleReference}>
-        <TitleScreen onStart={start} />
-        <ReferenceSheet open={referenceOpen} onClose={toggleReference} />
+      <Shell onReference={hydrated ? toggleReference : undefined}>
+        <TitleScreen
+          ready={hydrated}
+          onStart={() => {
+            pendingStart.current = true;
+            start();
+          }}
+        />
+        {hydrated ? <ReferenceSheet open={referenceOpen} onClose={toggleReference} /> : null}
       </Shell>
     );
   }
@@ -61,7 +83,6 @@ export function GameApp() {
     );
   }
 
-  const selectable = selectableDieIds(state);
   const event = ROUND_EVENTS[state.round - 1];
 
   return (
@@ -92,14 +113,25 @@ export function GameApp() {
             dice={state.dice}
             remainingIds={state.remainingIds}
             selectableIds={selectable}
+            previewId={previewId}
             edithIndex={state.edithIndex}
             takenBy={takenBy}
-            onPick={pick}
+            onPick={(id) => {
+              if (selectable.includes(id)) setPreviewId(id);
+            }}
             rolling={rolling}
           />
         </section>
         <div className="flex flex-col gap-3">
-          <ActionPanel state={state} onContinue={cont} onFinishEvent={finishEvent} />
+          <ActionPanel
+            state={state}
+            previewDie={state.dice.find((d) => d.id === previewId) ?? null}
+            onConfirmPick={() => {
+              if (previewId) pick(previewId);
+            }}
+            onContinue={cont}
+            onFinishEvent={finishEvent}
+          />
           {state.log.length > 0 ? (
             <ol className="rounded-[var(--radius-lg)] border border-border bg-card px-4 py-3 text-xs text-muted">
               {state.log.slice(-8).map((line, i) => (

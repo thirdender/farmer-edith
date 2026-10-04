@@ -10,12 +10,14 @@ export function RondelBoard({
   selectableIds,
   edithIndex,
   takenBy,
+  previewId,
   onPick,
   rolling,
 }: {
   dice: Die[];
   remainingIds: string[];
   selectableIds: string[];
+  previewId: string | null;
   edithIndex: number;
   takenBy: Record<string, "you" | "edith">;
   onPick: (id: string) => void;
@@ -83,7 +85,7 @@ export function RondelBoard({
                             value={die.value}
                             size="md"
                             dimmed={Boolean(taken)}
-                            selected={selectable}
+                            selected={previewId === die.id}
                           />
                           {taken ? (
                             <span

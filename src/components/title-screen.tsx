@@ -2,7 +2,13 @@ import { Button } from "@/components/ui/button.tsx";
 import { DieFace } from "@/components/die-face.tsx";
 import { SCORE_TIERS } from "@/lib/game/data.ts";
 
-export function TitleScreen({ onStart }: { onStart: () => void }) {
+export function TitleScreen({
+  onStart,
+  ready = true,
+}: {
+  onStart: () => void;
+  ready?: boolean;
+}) {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-6 px-1 py-4">
       <div className="relative overflow-hidden rounded-[var(--radius-xl)] border border-border bg-card p-6 shadow-[0_1px_2px_oklch(0.35_0.04_60/0.16)]">
@@ -22,8 +28,8 @@ export function TitleScreen({ onStart }: { onStart: () => void }) {
             <DieFace key={v} value={v} />
           ))}
         </div>
-        <Button className="relative mt-6 w-full" size="lg" onClick={onStart}>
-          Start a season
+        <Button className="relative mt-6 w-full" size="lg" onClick={onStart} disabled={!ready}>
+          {ready ? "Start a season" : "Loading…"}
         </Button>
       </div>
       <ol className="space-y-3 rounded-[var(--radius-lg)] border border-border bg-card/80 p-5 text-sm leading-relaxed">
