@@ -2,7 +2,7 @@ import { CloudRain, Scissors, Store } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { DieFace } from "@/components/die-face.tsx";
-import { EVENT_HELP, EVENT_LABEL, RONDEL } from "@/lib/game/data.ts";
+import { ACTION_ART, EVENT_HELP, EVENT_LABEL, RONDEL } from "@/lib/game/data.ts";
 import {
   edithActions,
   eventForRound,
@@ -133,8 +133,15 @@ function PickPreview({
         <li>
           <span className="font-semibold text-ink">Garden.</span> {help.garden}
         </li>
-        <li>
-          <span className="font-semibold text-ink">Rondel.</span> {help.rondel}
+        <li className="flex items-start gap-3">
+          <img
+            src={ACTION_ART[RONDEL[die.spaceIndex].id]}
+            alt=""
+            className="size-14 shrink-0 rounded-[var(--radius-sm)] object-cover ring-1 ring-border"
+          />
+          <span>
+            <span className="font-semibold text-ink">Rondel.</span> {help.rondel}
+          </span>
         </li>
       </ol>
       <Button className="mt-4 w-full" size="lg" onClick={onConfirm}>
@@ -188,8 +195,15 @@ function YourReveal({
         <li>
           <span className="font-semibold text-ink">Garden.</span> {help.garden}
         </li>
-        <li>
-          <span className="font-semibold text-ink">Rondel.</span> {help.rondel}
+        <li className="flex items-start gap-3">
+          <img
+            src={ACTION_ART[pick.action]}
+            alt=""
+            className="size-14 shrink-0 rounded-[var(--radius-sm)] object-cover ring-1 ring-border"
+          />
+          <span>
+            <span className="font-semibold text-ink">Rondel.</span> {help.rondel}
+          </span>
         </li>
       </ol>
       <Button className="mt-4 w-full" size="lg" onClick={onContinue}>
@@ -225,14 +239,18 @@ function EdithReveal({
         <DieFace value={pick.value} />
       </div>
       <ol className="mt-4 space-y-3">
-        {actions.map((action) => (
-          <li key={action.title} className="flex gap-3 rounded-[var(--radius-md)] bg-well px-3 py-3">
-            <EdithPortrait className="mt-0.5 size-10" />
-            <div className="min-w-0">
-              <p className="font-display text-base text-ink">{action.title}</p>
-              <p className="mt-1 text-sm leading-relaxed text-foreground">{action.detail}</p>
-              <p className="mt-1 text-xs text-muted">{action.passHint}</p>
-            </div>
+        {actions.map((action, index) => (
+          <li key={action.title} className="rounded-[var(--radius-md)] bg-well px-3 py-3">
+            {index === 1 ? (
+              <img
+                src={ACTION_ART[pick.action]}
+                alt=""
+                className="mb-2 h-24 w-full rounded-[var(--radius-sm)] object-cover ring-1 ring-border"
+              />
+            ) : null}
+            <p className="font-display text-base text-ink">{action.title}</p>
+            <p className="mt-1 text-sm leading-relaxed text-foreground">{action.detail}</p>
+            <p className="mt-1 text-xs text-muted">{action.passHint}</p>
           </li>
         ))}
       </ol>

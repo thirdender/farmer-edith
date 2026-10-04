@@ -13,6 +13,16 @@ export const RONDEL: RondelSpace[] = [
 
 export const GOLD_PIN_INDEX = 0;
 
+export const ACTION_ART: Record<ActionKind, string> = {
+  apiary: "/actions/apiary.jpg",
+  plantWater: "/actions/plant-water.jpg",
+  shedShears: "/actions/shed-shears.jpg",
+  compostGoods: "/actions/compost-goods.jpg",
+  fruit: "/actions/yard.jpg",
+  shedMower: "/actions/shed-mower.jpg",
+  farmersMarket: "/actions/market.jpg",
+};
+
 export const ROUND_EVENTS: EventKind[] = [
   "shed",
   "rain",

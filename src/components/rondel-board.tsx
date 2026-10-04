@@ -1,6 +1,6 @@
 import { Pin } from "lucide-react";
 import { DieFace } from "@/components/die-face.tsx";
-import { GOLD_PIN_INDEX, RONDEL } from "@/lib/game/data.ts";
+import { ACTION_ART, GOLD_PIN_INDEX, RONDEL } from "@/lib/game/data.ts";
 import type { Die } from "@/lib/game/types.ts";
 import { cn } from "@/lib/utils.ts";
 
@@ -50,6 +50,11 @@ export function RondelBoard({
                   )}
                   {isGold ? <Pin className="size-3.5 text-pin" strokeWidth={2.2} /> : <span className="h-3.5" />}
                 </div>
+                <img
+                  src={ACTION_ART[space.id]}
+                  alt=""
+                  className="size-12 shrink-0 rounded-[var(--radius-sm)] object-cover ring-1 ring-border"
+                />
                 <div className="min-w-0 flex-1">
                   <p className="font-display text-sm leading-tight text-ink sm:text-base">{space.short}</p>
                   <p className="text-[0.65rem] uppercase tracking-wide text-muted">
@@ -76,7 +81,7 @@ export function RondelBoard({
                           disabled={!selectable}
                           onClick={() => onPick(die.id)}
                           className={cn(
-                            "relative rounded-[var(--radius-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            "relative shrink-0 rounded-[var(--radius-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                             selectable && "cursor-pointer",
                             rolling && "animate-die-tumble",
                           )}

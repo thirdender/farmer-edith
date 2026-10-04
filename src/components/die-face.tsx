@@ -52,7 +52,7 @@ export function DieFace({
   return (
     <div
       className={cn(
-        "relative grid grid-cols-3 grid-rows-3 place-items-center rounded-[var(--radius-sm)] bg-die text-pip shadow-[inset_0_1px_0_oklch(1_0_0/0.55),0_1px_2px_oklch(0.3_0.04_60/0.28)] ring-1 ring-die-ring",
+        "relative box-border aspect-square shrink-0 grid grid-cols-3 grid-rows-3 place-items-center rounded-[var(--radius-sm)] bg-die text-pip shadow-[inset_0_1px_0_oklch(1_0_0/0.55),0_1px_2px_oklch(0.3_0.04_60/0.28)] ring-1 ring-die-ring",
         size === "sm" && "size-9 p-1",
         size === "md" && "size-11 p-1.5",
         size === "lg" && "size-14 p-2",
