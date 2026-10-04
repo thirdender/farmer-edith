@@ -2,7 +2,7 @@ import { CloudRain, Scissors, Store } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { DieFace } from "@/components/die-face.tsx";
-import { ACTION_ART, EVENT_HELP, EVENT_LABEL, RONDEL } from "@/lib/game/data.ts";
+import { ACTION_ART, EVENT_HELP, EVENT_LABEL, GARDEN_ART, RONDEL } from "@/lib/game/data.ts";
 import {
   edithActions,
   eventForRound,
@@ -130,8 +130,15 @@ function PickPreview({
         </div>
       </div>
       <ol className="mt-4 space-y-3 text-sm leading-relaxed">
-        <li>
-          <span className="font-semibold text-ink">Garden.</span> {help.garden}
+        <li className="flex items-start gap-3">
+          <img
+            src={GARDEN_ART}
+            alt=""
+            className="size-14 shrink-0 rounded-[var(--radius-sm)] object-cover ring-1 ring-border"
+          />
+          <span>
+            <span className="font-semibold text-ink">Garden.</span> {help.garden}
+          </span>
         </li>
         <li className="flex items-start gap-3">
           <img
@@ -192,8 +199,15 @@ function YourReveal({
         </div>
       </div>
       <ol className="mt-4 space-y-3 text-sm leading-relaxed">
-        <li>
-          <span className="font-semibold text-ink">Garden.</span> {help.garden}
+        <li className="flex items-start gap-3">
+          <img
+            src={GARDEN_ART}
+            alt=""
+            className="size-14 shrink-0 rounded-[var(--radius-sm)] object-cover ring-1 ring-border"
+          />
+          <span>
+            <span className="font-semibold text-ink">Garden.</span> {help.garden}
+          </span>
         </li>
         <li className="flex items-start gap-3">
           <img
@@ -241,6 +255,13 @@ function EdithReveal({
       <ol className="mt-4 space-y-3">
         {actions.map((action, index) => (
           <li key={action.title} className="rounded-[var(--radius-md)] bg-well px-3 py-3">
+            {index === 0 ? (
+              <img
+                src={GARDEN_ART}
+                alt=""
+                className="mb-2 h-24 w-full rounded-[var(--radius-sm)] object-cover ring-1 ring-border"
+              />
+            ) : null}
             {index === 1 ? (
               <img
                 src={ACTION_ART[pick.action]}

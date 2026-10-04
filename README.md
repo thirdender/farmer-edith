@@ -2,6 +2,8 @@
 
 Solo companion for **Three Sisters**. You keep the paper scoresheets. This app rolls the four dice, places them on the rondel, drafts Farmer Edith, and tells you what she crosses off.
 
+![A round of Farmer Edith, with the rondel and a forced pick](docs/screenshot.png)
+
 ## Play without installing
 
 The app is already running in the Grok preview. Press **Start a season**, then **Roll four dice** each round.

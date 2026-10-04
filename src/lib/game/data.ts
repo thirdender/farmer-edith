@@ -23,6 +23,9 @@ export const ACTION_ART: Record<ActionKind, string> = {
   farmersMarket: "/actions/market.jpg",
 };
 
+/** The garden step, taken before the rondel action. */
+export const GARDEN_ART = "/actions/garden.jpg";
+
 export const ROUND_EVENTS: EventKind[] = [
   "shed",
   "rain",

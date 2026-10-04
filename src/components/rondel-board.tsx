@@ -37,12 +37,21 @@ export function RondelBoard({
             <li key={space.index}>
               <article
                 className={cn(
-                  "flex items-center gap-3 rounded-[var(--radius-md)] border bg-note px-3 py-2 shadow-[0_1px_1px_oklch(0.35_0.04_60/0.1)]",
+                  "relative flex items-center gap-3 overflow-hidden rounded-[var(--radius-md)] border bg-note px-3 py-2 shadow-[0_1px_1px_oklch(0.35_0.04_60/0.1)]",
                   isEdith ? "border-danger/50 ring-1 ring-danger/30" : "border-border",
                   isGold && "bg-card",
                 )}
               >
-                <div className="flex w-7 flex-col items-center gap-1">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${ACTION_ART[space.id]})`,
+                    maskImage: "linear-gradient(to right, #000 0%, #000 28%, transparent 100%)",
+                    WebkitMaskImage: "linear-gradient(to right, #000 0%, #000 28%, transparent 100%)",
+                  }}
+                />
+                <div className="relative flex w-7 flex-col items-center gap-1">
                   {isEdith ? (
                     <span className="size-2.5 rounded-full bg-danger" title="Edith" />
                   ) : (
@@ -50,14 +59,11 @@ export function RondelBoard({
                   )}
                   {isGold ? <Pin className="size-3.5 text-pin" strokeWidth={2.2} /> : <span className="h-3.5" />}
                 </div>
-                <img
-                  src={ACTION_ART[space.id]}
-                  alt=""
-                  className="size-12 shrink-0 rounded-[var(--radius-sm)] object-cover ring-1 ring-border"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="font-display text-sm leading-tight text-ink sm:text-base">{space.short}</p>
-                  <p className="text-[0.65rem] uppercase tracking-wide text-muted">
+                <div className="relative min-w-0 flex-1 pl-[2em]">
+                  <p className="font-display text-sm leading-tight text-ink [text-shadow:0_0_6px_#f6efe2,0_0_2px_#f6efe2] sm:text-base">
+                    {space.short}
+                  </p>
+                  <p className="text-[0.65rem] uppercase tracking-wide text-muted [text-shadow:0_0_6px_#f6efe2,0_0_2px_#f6efe2]">
                     {isEdith && dice.length === 0
                       ? "Place lowest group here"
                       : isEdith
@@ -67,7 +73,7 @@ export function RondelBoard({
                           : "\u00a0"}
                   </p>
                 </div>
-                <div className="flex min-h-11 min-w-24 flex-wrap items-center justify-end gap-1.5">
+                <div className="relative flex min-h-11 min-w-24 flex-wrap items-center justify-end gap-1.5">
                   {onSpace.length === 0 ? (
                     <span className="text-xs text-muted">empty</span>
                   ) : (
