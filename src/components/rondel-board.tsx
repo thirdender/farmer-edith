@@ -59,7 +59,7 @@ export function RondelBoard({
                   )}
                   {isGold ? <Pin className="size-3.5 text-pin" strokeWidth={2.2} /> : <span className="h-3.5" />}
                 </div>
-                <div className="relative min-w-0 flex-1 pl-[2em]">
+                <div className="relative min-w-0 flex-1 pl-[20%]">
                   <p className="font-display text-sm leading-tight text-ink [text-shadow:0_0_6px_#f6efe2,0_0_2px_#f6efe2] sm:text-base">
                     {space.short}
                   </p>

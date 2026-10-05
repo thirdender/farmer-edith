@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { idbStorage } from "@/lib/game/idb-storage.ts";
 import {
   advanceAfterReveal,
   applyPick,
@@ -28,6 +29,28 @@ interface GameStore {
 
 function pushHistory(history: GameState[], snapshot: GameState): GameState[] {
   return [...history, snapshot].slice(-MAX_HISTORY);
+}
+
+const PHASES = new Set<GameState["phase"]>([
+  "title",
+  "planning",
+  "yourPick",
+  "edithReveal",
+  "forcedPick",
+  "yourReveal",
+  "event",
+  "gameOver",
+]);
+
+function isGameState(value: unknown): value is GameState {
+  if (!value || typeof value !== "object") return false;
+  const state = value as GameState;
+  return (
+    PHASES.has(state.phase) &&
+    Array.isArray(state.dice) &&
+    Array.isArray(state.picks) &&
+    typeof state.round === "number"
+  );
 }
 
 export const useGameStore = create<GameStore>()(
@@ -96,8 +119,15 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: "farmer-edith-solo",
-      partialize: (s) => ({ state: s.state }),
+      storage: createJSONStorage(() => idbStorage),
+      partialize: (s) => ({ state: s.state, history: s.history }),
       skipHydration: true,
+      merge: (persisted, current) => {
+        const saved = persisted as { state?: unknown; history?: unknown } | undefined;
+        if (!saved || !isGameState(saved.state)) return current;
+        const history = Array.isArray(saved.history) ? saved.history.filter(isGameState) : [];
+        return { ...current, state: saved.state, history };
+      },
     },
   ),
 );

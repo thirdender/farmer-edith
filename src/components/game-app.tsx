@@ -1,12 +1,12 @@
 import { BookOpen, RotateCcw, Undo2 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { ActionPanel } from "@/components/action-panel.tsx";
 import { ReferenceSheet } from "@/components/reference-sheet.tsx";
 import { RondelBoard } from "@/components/rondel-board.tsx";
 import { ScoreScreen } from "@/components/score-screen.tsx";
 import { TitleScreen } from "@/components/title-screen.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { EVENT_LABEL, ROUND_EVENTS } from "@/lib/game/data.ts";
+import { EVENT_LABEL, GARDEN_ART, ROUND_EVENTS } from "@/lib/game/data.ts";
 import { selectableDieIds, youAreFirst } from "@/lib/game/engine.ts";
 import { useGameStore } from "@/store/game-store.ts";
 
@@ -61,7 +61,7 @@ export function GameApp() {
 
   if (!hydrated || state.phase === "title") {
     return (
-      <Shell onReference={hydrated ? toggleReference : undefined}>
+      <Shell garden onReference={hydrated ? toggleReference : undefined}>
         <TitleScreen
           ready={hydrated}
           onStart={() => {
@@ -150,17 +150,22 @@ export function GameApp() {
 
 function Shell({
   children,
+  garden = false,
   onReference,
   onUndo,
   onReset,
 }: {
   children: ReactNode;
+  garden?: boolean;
   onReference?: () => void;
   onUndo?: () => void;
   onReset?: () => void;
 }) {
   return (
-    <div className="min-h-dvh bg-cork px-3 py-4 sm:px-6 sm:py-6">
+    <div
+      className={`relative min-h-dvh px-3 py-4 sm:px-6 sm:py-6${garden ? " intro-garden" : " bg-cork"}`}
+      style={garden ? ({ "--intro-garden": `url(${GARDEN_ART})` } as CSSProperties) : undefined}
+    >
       <div className="mx-auto max-w-5xl rounded-[var(--radius-frame)] border-[10px] border-frame bg-board p-3 shadow-[0_10px_30px_oklch(0.35_0.04_60/0.28)] sm:p-5">
         <div className="mb-3 flex items-center justify-between gap-2">
           <p className="font-display text-sm text-ink">Farmer Edith</p>

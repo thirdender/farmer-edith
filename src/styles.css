@@ -73,6 +73,27 @@
   }
 }
 
+.intro-garden {
+  background-color: var(--color-cork);
+}
+
+.intro-garden::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--intro-garden);
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.intro-garden > * {
+  position: relative;
+  z-index: 1;
+}
+
 .bg-cork {
   background-color: var(--color-cork);
   background-image:

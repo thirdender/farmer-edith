@@ -20,8 +20,16 @@ export function TitleScreen({
           Farmer Edith
         </h1>
         <p className="relative mt-3 max-w-prose text-sm leading-relaxed text-foreground">
-          You keep the paper sheets. This companion rolls the four dice, seats them on
-          the rondel, drafts Edith, and tells you exactly what she crosses off.
+          This is a solo bot helper for the board game{" "}
+          <a
+            href="https://boardgamegeek.com/boardgame/436127/three-sisters-harvest-edition"
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-ink underline decoration-border underline-offset-2"
+          >
+            Three Sisters
+          </a>
+          . You keep the paper sheets, and the app will keep track of the dice.
         </p>
         <div className="relative mt-5 flex gap-2">
           {[3, 1, 5, 6].map((v) => (
